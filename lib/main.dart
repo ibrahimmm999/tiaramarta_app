@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiaraamarta_mobile/home_page.dart';
 import 'package:tiaraamarta_mobile/login_page.dart';
+import 'package:tiaraamarta_mobile/providers/ayokebali_provider.dart';
 import 'package:tiaraamarta_mobile/providers/room_provider.dart';
 import 'package:tiaraamarta_mobile/providers/user_provider.dart';
 import 'package:tiaraamarta_mobile/splash_page.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => RoomProvider()),
+        ChangeNotifierProvider(create: (context) => AyoKeBaliProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tiaraamarta_mobile/shared/theme.dart';
+import 'dart:async';
 
-import '../providers/user_provider.dart';
-import '../services/user_service.dart';
+import 'package:flutter/material.dart';
+import 'package:tiaraamarta_mobile/shared/theme.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -20,21 +18,9 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   getinit() async {
-    final navigator = Navigator.of(context);
-    UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
-
-    final String? token = await UserService().getTokenPreference();
-    if (token == null) {
-      await navigator.pushNamedAndRemoveUntil('/log-in', (route) => false);
-    } else {
-      if (await userProvider.getUser(token: token)) {
-        // Get Data User
-        await navigator.pushNamedAndRemoveUntil('/home', (route) => false);
-      } else {
-        await navigator.pushNamedAndRemoveUntil('/log-in', (route) => false);
-      }
-    }
+    Timer(const Duration(seconds: 3), () {
+      Navigator.pushNamedAndRemoveUntil(context, '/log-in', (route) => false);
+    });
   }
 
   @override

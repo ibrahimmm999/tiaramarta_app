@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiaraamarta_mobile/admin/input_room_page.dart';
+import 'package:tiaraamarta_mobile/all_destination_page.dart';
+import 'package:tiaraamarta_mobile/detail_destination_page.dart';
 import 'package:tiaraamarta_mobile/detail_room_page.dart';
+import 'package:tiaraamarta_mobile/models/ayokebali_model.dart';
 import 'package:tiaraamarta_mobile/profile_page.dart';
+import 'package:tiaraamarta_mobile/providers/ayokebali_provider.dart';
 import 'package:tiaraamarta_mobile/providers/room_provider.dart';
 import 'package:tiaraamarta_mobile/providers/user_provider.dart';
 import 'package:tiaraamarta_mobile/shared/theme.dart';
@@ -26,13 +30,18 @@ class _HomePageState extends State<HomePage> {
         Provider.of<UserProvider>(context, listen: false);
     RoomProvider roomProvider =
         Provider.of<RoomProvider>(context, listen: false);
+    AyoKeBaliProvider ayoKeBaliProvider =
+        Provider.of<AyoKeBaliProvider>(context, listen: false);
     await roomProvider.getDataRooms(userProvider.user.token);
+    await ayoKeBaliProvider.getDestinations(userProvider.user.token);
   }
 
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
     RoomProvider roomProvider = Provider.of<RoomProvider>(context);
+    AyoKeBaliProvider ayoKeBaliProvider =
+        Provider.of<AyoKeBaliProvider>(context);
     Widget card(String name, int price) {
       return Container(
         decoration: BoxDecoration(
@@ -66,6 +75,63 @@ class _HomePageState extends State<HomePage> {
                   style: whiteText.copyWith(fontSize: 16),
                 )
               ],
+            )
+          ],
+        ),
+      );
+    }
+
+    Widget cardDestination(AyoKeBaliModel ayoKeBaliModel) {
+      return Container(
+        decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.circular(defaultRadius)),
+        margin: const EdgeInsets.only(top: 20),
+        width: double.infinity,
+        child: Row(
+          children: [
+            Container(
+              height: 120,
+              width: 120,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(defaultRadius),
+                  image: DecorationImage(
+                      image: AssetImage(
+                          (ayoKeBaliModel.category == "Restaurant" ||
+                                  ayoKeBaliModel.category == "Cafe")
+                              ? "assets/food.jpg"
+                              : (ayoKeBaliModel.category == "Pantai"
+                                  ? "assets/beach.jpg"
+                                  : (ayoKeBaliModel.category.contains("Club")
+                                      ? "assets/club.jpg"
+                                      : (ayoKeBaliModel.category == "Waterbom"
+                                          ? "assets/waterbom.jpg"
+                                          : (ayoKeBaliModel.category == "Mall"
+                                              ? "assets/mall.jpg"
+                                              : (ayoKeBaliModel.category ==
+                                                      "Adventure"
+                                                  ? "assets/adv.jpg"
+                                                  : "assets/bali.jpg")))))),
+                      fit: BoxFit.cover)),
+            ),
+            const SizedBox(
+              width: 12,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    ayoKeBaliModel.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: whiteText.copyWith(fontSize: 16),
+                  ),
+                  Text(
+                    "${ayoKeBaliModel.price} Rupiah",
+                    style: whiteText.copyWith(fontSize: 14),
+                  )
+                ],
+              ),
             )
           ],
         ),
@@ -181,7 +247,53 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: card(room.name, room.price));
             }).toList(),
-          )
+          ),
+          const SizedBox(
+            height: 32,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Tempat Wisata di Bali",
+                style: darkText.copyWith(fontSize: 20),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AllDestinationPage()));
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(defaultRadius)),
+                  child: Text(
+                    "See More",
+                    style: whiteText,
+                  ),
+                ),
+              )
+            ],
+          ),
+          Column(
+            children: ayoKeBaliProvider.destinations.length > 5
+                ? ayoKeBaliProvider.destinations.getRange(0, 5).map((dest) {
+                    return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetailDestinationPage(
+                                        ayoKeBaliModel: dest,
+                                      )));
+                        },
+                        child: cardDestination(dest));
+                  }).toList()
+                : [],
+          ),
         ]),
       ),
     );
