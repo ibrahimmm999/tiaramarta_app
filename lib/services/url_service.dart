@@ -1,5 +1,6 @@
 class UrlService {
-  String baseUrl = 'http://10.0.2.2:8000/';
+  String baseUrl =
+      'https://kostiaraamarta.ashyhill-b518ef35.australiaeast.azurecontainerapps.io/';
   Uri api(String param) {
     return Uri.parse(baseUrl + param);
   }
