@@ -6,34 +6,48 @@ import 'package:tiaraamarta_mobile/register_page.dart';
 import 'package:tiaraamarta_mobile/widgets/custom_button.dart';
 import 'package:tiaraamarta_mobile/widgets/custom_text_form_field.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+bool isLoading = false;
+
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController usernameController =
         TextEditingController(text: '');
     final TextEditingController passwordController =
         TextEditingController(text: '');
-    bool isLoading = false;
     UserProvider userProvider = Provider.of<UserProvider>(context);
 
     Future<void> handleLogin() async {
+      setState(() {
+        isLoading = !isLoading;
+      });
       final navigator = Navigator.of(context);
       final scaffoldMessenger = ScaffoldMessenger.of(context);
 
       if (await userProvider.login(
           username: usernameController.text,
           password: passwordController.text)) {
+        setState(() {
+          isLoading = !isLoading;
+        });
         navigator.pushNamedAndRemoveUntil('/home', (route) => false);
       } else {
-        print(userProvider.errorMessage);
+        setState(() {
+          isLoading = !isLoading;
+        });
         scaffoldMessenger.removeCurrentSnackBar();
         scaffoldMessenger.showSnackBar(
-          SnackBar(
+          const SnackBar(
             backgroundColor: Colors.red,
             content: Text(
-              userProvider.errorMessage,
+              "Username atau password salah",
               textAlign: TextAlign.center,
             ),
           ),
@@ -95,7 +109,7 @@ class LoginPage extends StatelessWidget {
               height: 70,
             ),
             Text(
-              "Username Address",
+              "Username",
               style: darkText.copyWith(fontSize: 16, fontWeight: medium),
             ),
             const SizedBox(

@@ -5,19 +5,31 @@ import 'package:tiaraamarta_mobile/services/user_service.dart';
 import 'package:tiaraamarta_mobile/shared/theme.dart';
 import 'package:tiaraamarta_mobile/widgets/custom_button.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+bool isLoading = false;
+
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
 
     Future<void> handleLogout() async {
+      setState(() {
+        isLoading = !isLoading;
+      });
       final navigator = Navigator.of(context);
       print(userProvider.user);
       print("logout");
       await UserService().clearTokenPreference();
-
+      setState(() {
+        isLoading = !isLoading;
+      });
       navigator.pushNamedAndRemoveUntil('/log-in', (route) => false);
     }
 
@@ -65,6 +77,7 @@ class ProfilePage extends StatelessWidget {
                 height: 80,
               ),
               CustomButton(
+                isLoading: isLoading,
                 buttonColor: Colors.red,
                 buttonText: "Logout",
                 onPressed: () {

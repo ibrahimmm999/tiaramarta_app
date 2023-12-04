@@ -30,6 +30,8 @@ class InputRoomPage extends StatefulWidget {
   State<InputRoomPage> createState() => _InputRoomPageState();
 }
 
+bool isLoading = false;
+
 class _InputRoomPageState extends State<InputRoomPage> {
   @override
   Widget build(BuildContext context) {
@@ -79,7 +81,7 @@ class _InputRoomPageState extends State<InputRoomPage> {
 
     Widget inputUser() {
       return CustomTextFormField(
-        hintText: 'Username',
+        hintText: 'User ID',
         controller: usernameC,
         radiusBorder: defaultRadius,
         keyboardType: TextInputType.number,
@@ -169,11 +171,15 @@ class _InputRoomPageState extends State<InputRoomPage> {
             height: 44,
           ),
           CustomButton(
+              isLoading: isLoading,
               radiusButton: defaultRadius,
               buttonColor: primaryColor,
               buttonText: "Save",
               widthButton: double.infinity,
               onPressed: () async {
+                setState(() {
+                  isLoading = !isLoading;
+                });
                 widget.isEdit
                     ? await RoomService().editRoom(
                         id: widget.id!,
@@ -189,6 +195,9 @@ class _InputRoomPageState extends State<InputRoomPage> {
                         desc: descC.text,
                         urlVideo: linkC.text,
                       );
+                setState(() {
+                  isLoading = !isLoading;
+                });
                 // ignore: use_build_context_synchronously
                 Navigator.pushAndRemoveUntil(
                     context,

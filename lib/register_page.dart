@@ -6,9 +6,16 @@ import '../../shared/theme.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_form_field.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+bool isLoading = false;
+
+class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
@@ -22,29 +29,34 @@ class RegisterPage extends StatelessWidget {
     final TextEditingController passwordController =
         TextEditingController(text: '');
 
-    bool isLoading = false;
     Future<void> handleRegister() async {
+      setState(() {
+        isLoading = !isLoading;
+      });
       final navigator = Navigator.of(context);
       final scaffoldMessenger = ScaffoldMessenger.of(context);
-      print("WKWKWK");
       if (await userProvider.register(
           fullname: fullNameController.text,
           username: usernameController.text,
           password: passwordController.text)) {
-        print("WKWKWK");
         if (await userProvider.login(
             username: usernameController.text,
             password: passwordController.text)) {
-          print("WKWKWK");
+          setState(() {
+            isLoading = !isLoading;
+          });
           navigator.pushNamedAndRemoveUntil('/home', (route) => false);
         } else {
           print(userProvider.errorMessage);
+          setState(() {
+            isLoading = !isLoading;
+          });
           scaffoldMessenger.removeCurrentSnackBar();
           scaffoldMessenger.showSnackBar(
-            SnackBar(
+            const SnackBar(
               backgroundColor: Colors.red,
               content: Text(
-                userProvider.errorMessage,
+                "Username sudah ada",
                 textAlign: TextAlign.center,
               ),
             ),
@@ -54,10 +66,10 @@ class RegisterPage extends StatelessWidget {
         print(userProvider.errorMessage);
         scaffoldMessenger.removeCurrentSnackBar();
         scaffoldMessenger.showSnackBar(
-          SnackBar(
+          const SnackBar(
             backgroundColor: Colors.red,
             content: Text(
-              userProvider.errorMessage,
+              "Username sudah ada",
               textAlign: TextAlign.center,
             ),
           ),

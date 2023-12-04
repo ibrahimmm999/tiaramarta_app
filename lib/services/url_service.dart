@@ -1,6 +1,6 @@
 class UrlService {
   String baseUrl =
-      'https://kostiaraamarta.ashyhill-b518ef35.australiaeast.azurecontainerapps.io/';
+      'https://kostiaraamarta.politesky-22f54108.eastus.azurecontainerapps.io/';
   Uri api(String param) {
     return Uri.parse(baseUrl + param);
   }
