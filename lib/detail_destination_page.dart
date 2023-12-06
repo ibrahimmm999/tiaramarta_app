@@ -41,7 +41,7 @@ class DetailDestinationPage extends StatelessWidget {
                 ),
               ),
               Text(
-                "Detail Room",
+                "Detail Destination",
                 style: primaryColorText.copyWith(fontSize: 32),
               ),
             ],
